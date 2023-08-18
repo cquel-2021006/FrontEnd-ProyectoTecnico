@@ -1,6 +1,5 @@
 import Swal from "sweetalert2";
 import { createUsuario } from "../Api/apiUsuario";
-import { usuario } from "../models/usuario";
 
 export const sendData = async (state, option) => {
     let resultado;

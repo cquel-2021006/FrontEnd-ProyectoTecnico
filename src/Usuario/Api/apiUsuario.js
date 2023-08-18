@@ -55,7 +55,7 @@ export const createUsuario = async (carnet, nombre, direccion, genero, telefono,
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "No se pudo agregar el evento.",
+        text: "No se pudo agregar el usuario",
       });
     }
   };

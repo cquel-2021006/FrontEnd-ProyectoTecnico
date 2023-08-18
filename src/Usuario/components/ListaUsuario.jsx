@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
 
 import { DeleteUsuario, apiUsuario } from "../Api/apiUsuario";
 
 
 export const ListaUsuario = () => {
+    const componentPdf = useRef();
+
     const [ListaUsuario, setListaUsuario] = useState([]);
     const [showModal, setShowModal] = useState(false)
     const [usuario, setUsuario] = useState([]);
@@ -30,6 +33,13 @@ export const ListaUsuario = () => {
     useEffect(() => {
         viewUsuario();
     }, [showModal]);
+
+    const generatePDF = useReactToPrint({
+        content: () => componentPdf.current,
+        documentTitle: "Userdata",
+        onAfterPrint: () => alert("Se ha salvado el PDF")
+
+    });
 
     const eliminar = async (id) => {
         const confirmacion = await Swal.fire({
@@ -82,57 +92,68 @@ export const ListaUsuario = () => {
                     </button>
                 </div>
             </Link>
-            <div className='container'>
-                <Table striped bordered hover>
-                    <thead style={{ backgroundColor: "#FAD7A0" }} className="text-center">
-                        <tr>
-                            <th>CARNET</th>
-                            <th>NOMBRE</th>
-                            <th>DIRECCION</th>
-                            <th>GENERO</th>
-                            <th>TELEFONO</th>
-                            <th>FECHA NACIMIENTO</th>
-                            <th>CARRERA</th>
-                            <th>GENERO POESIA</th>
-                            <th>FECHA INSCRIPCION</th>
-                            <th>OPTIONS</th>
-                        </tr>
-                    </thead>
 
-                    {ListaUsuario?.map((t) => {
-                        return (
-                            <tbody key={t._id} className="text-center">
-                                <tr>
-                                    <td>{t.carnet}</td>
-                                    <td>{t.nombre}</td>
-                                    <td>{t.direccion}</td>
-                                    <td>{t.genero}</td>
-                                    <td>{t.telefono}</td>
-                                    <td>{t.fechaNacimiento}</td>
-                                    <td>{t.carreraEstudio}</td>
-                                    <td>{t.generoPoesia}</td>
-                                    <td>{t.fechaInscripcion}</td>
-                                    <td>{t.nombre}</td>
+            <div ref={componentPdf} style={{ width: "100%" }}>
+                <div className='container'>
+                    <Table striped bordered hover>
+                        <thead style={{ backgroundColor: "#FAD7A0" }} className="text-center">
+                            <tr>
+                                <th>CARNET</th>
+                                <th>NOMBRE</th>
+                                <th>DIRECCION</th>
+                                <th>GENERO</th>
+                                <th>TELEFONO</th>
+                                <th>FECHA NACIMIENTO</th>
+                                <th>CARRERA</th>
+                                <th>GENERO POESIA</th>
+                                <th>FECHA INSCRIPCION</th>
+                                <th>OPTIONS</th>
+                            </tr>
+                        </thead>
 
-                                    <td>
-                                        <div className="d-grid gap-2">
-                                            <Button
-                                                variant="danger"
-                                                size="sm"
-                                                onClick={() => {
-                                                    eliminar(t._id);
-                                                }}
-                                                style={{ backgroundColor: "#CD5C5C", border: "none" }}
-                                            >
-                                                <i className="fa fa-trash mx-2"></i>Eliminar
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        );
-                    })}
-                </Table>
+                        {ListaUsuario?.map((t) => {
+                            return (
+                                <tbody key={t._id} className="text-center">
+                                    <tr>
+                                        <td>{t.carnet}</td>
+                                        <td>{t.nombre}</td>
+                                        <td>{t.direccion}</td>
+                                        <td>{t.genero}</td>
+                                        <td>{t.telefono}</td>
+                                        <td>{t.fechaNacimiento}</td>
+                                        <td>{t.carreraEstudio}</td>
+                                        <td>{t.generoPoesia}</td>
+                                        <td>{t.fechaInscripcion}</td>
+
+                                        <td>
+                                            <div className="d-grid gap-2">
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        eliminar(t._id);
+                                                    }}
+                                                    style={{ backgroundColor: "#CD5C5C", border: "none" }}
+                                                >
+                                                    <i className="fa fa-trash mx-2"></i>Eliminar
+                                                </Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            );
+                        })}
+                    </Table>
+
+                </div>
+            </div>
+            <div style={{
+                marginBottom: "20px", textAlign: "center",
+                opacity: "100%",
+            }} onClick={generatePDF}>
+                <button className="btn btn-secondary" type='button'>
+                    Imprimir PDF
+                </button>
             </div>
         </div>
     );
